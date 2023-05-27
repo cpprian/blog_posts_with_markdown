@@ -1,0 +1,34 @@
+mongodb:
+  enabled: true
+
+  image: 
+    repository: mongo
+    tag: 4.2.23
+  
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: standard
+    accessModes:
+      - ReadWriteOnce
+    mountPath: /data/db
+
+# Blogposts users values
+users:
+  args:
+    - "-mongoURI"
+    - "mongodb://blogposts-mongodb:27017/"

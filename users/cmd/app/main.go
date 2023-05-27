@@ -21,7 +21,7 @@ type application struct {
 }
 
 func main() {
-	serverAddr := flag.String("serverAddr", ":4000", "HTTP server network address")
+	serverAddr := flag.String("serverAddr", "", "HTTP server network address")
 	serverPort := flag.Int("serverPort", 4000, "HTTP server network port")
 	mongoURI := flag.String("mongoURI", "mongodb://localhost:27017", "MongoDB connection URI")
 	mongoDB := flag.String("mongoDB", "users", "MongoDB database name")

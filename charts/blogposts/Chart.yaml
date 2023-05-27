@@ -1,0 +1,16 @@
+apiVersion: v2
+version: 0.1.0
+appVersion: "v2.2.2"
+name: blogposts
+description: A Helm chart to deploy the blogposts service
+home: https://github.com/cpprian/blog_posts_with_markdown
+type: application
+dependencies:
+  - condition: mongodb.enabled
+    name: mongodb
+    repository: https://charts.bitnami.com/bitnami
+    version: 13.6.x
+  - name: users
+    version: 0.x.x
+sources:
+  - https://github.com/cpprian/blog_posts_with_markdown
