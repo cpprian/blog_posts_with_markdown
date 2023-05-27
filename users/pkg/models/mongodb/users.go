@@ -33,7 +33,7 @@ func (m *UserModel) All() ([]models.User, error) {
 }
 
 // FindByID finds a user by id
-func (m *UserModel) FindByID(id string) (*models.User, error) {
+func (m *UserModel) FindById(id string) (*models.User, error) {
 	p, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
