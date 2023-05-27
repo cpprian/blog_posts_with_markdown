@@ -1,0 +1,17 @@
+package main
+
+import "github.com/gorilla/mux"
+
+func (app *application) routes() *mux.Router {
+	// Create a new mux router
+	router := mux.NewRouter()
+
+	// Register handlers
+	router.HandleFunc("/api/users", app.all).Methods("GET")
+	router.HandleFunc("/api/users/{id}", app.findById).Methods("GET")
+	router.HandleFunc("/api/users/{username}", app.findByUsername).Methods("GET")
+	router.HandleFunc("/api/users", app.insert).Methods("POST")
+	router.HandleFunc("/api/users/{id}", app.update).Methods("PUT")
+
+	return router
+}
