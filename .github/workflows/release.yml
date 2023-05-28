@@ -5,6 +5,7 @@ on: push
 env:
     REGISTRY: ghcr.io
     USERS_IMAGE_NAME: "blogposts-users"
+    WEBSITE_IMAGE_NAME: "blogposts-website"
 
 jobs:
     multi-registries:
@@ -38,3 +39,12 @@ jobs:
                 tags: |
                     cpprian/${{ env.USERS_IMAGE_NAME }}
                     ghcr.io/cpprian/${{ env.USERS_IMAGE_NAME }}
+            - name: Build and push the website image
+              uses: docker/build-push-action@v3
+              with:
+                context: ./website/
+                file: ./website/Dockerfile
+                push: true
+                tags: |
+                    cpprian/${{ env.WEBSITE_IMAGE_NAME }}
+                    ghcr.io/cpprian/${{ env.WEBSITE_IMAGE_NAME }}
