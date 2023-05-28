@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/cpprian/blog_posts_with_markdown/blogposts-users
+  repository: ghcr.io/cpprian/blogposts-users
   pullPolicy: IfNotPresent
   tag: ""
 
