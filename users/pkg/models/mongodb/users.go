@@ -67,6 +67,21 @@ func (m *UserModel) FindByUsername(username string) (*models.User, error) {
 	return &user, nil
 }
 
+// FindByEmail finds a user by email
+func (m *UserModel) FindByEmail(email string) (*models.User, error) {
+	ctx := context.TODO()
+	var user models.User
+
+	if err := m.C.FindOne(ctx, bson.M{"email": email}).Decode(&user); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("no user found")
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 // InsertUser inserts a new user to the database
 func (m *UserModel) InsertUser(user *models.User) (*mongo.InsertOneResult, error) {
 	ctx := context.TODO()

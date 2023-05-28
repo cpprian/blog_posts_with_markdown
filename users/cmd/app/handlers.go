@@ -84,6 +84,34 @@ func (app *application) findByUsername(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
+func (app *application) findByEmail(w http.ResponseWriter, r *http.Request) {
+	// Get email from request
+	email := r.URL.Query().Get("email")
+
+	// Get user
+	user, err := app.users.FindByEmail(email)
+	if err != nil {
+		if err.Error() == "no user found" {
+			app.infoLog.Println("User not found")
+			return
+		}
+		app.serverError(w, err)
+	}
+
+	// Convert user into json encoding
+	b, err := json.Marshal(user)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	app.infoLog.Println("User was sent")
+
+	// Send response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(b)
+}
+
 func (app *application) insertUser(w http.ResponseWriter, r *http.Request) {
 	// Get user from request
 	var user models.User

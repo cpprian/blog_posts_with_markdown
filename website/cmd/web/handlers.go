@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"strings"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -28,23 +29,32 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *application) getApiContent(url string, templateData interface{}) error {
+func (app *application) getApiContent(url string, templateData interface{}) (*http.Response, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(templateData)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return resp, nil
 }
 
 func (app *application) postApiContent(url string, data interface{}) error {
-	// TODO: implement
+	b, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	_, err = http.Post(url, "application/json", strings.NewReader(string(b)))
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

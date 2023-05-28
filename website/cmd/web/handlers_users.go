@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/cpprian/blog_posts_with_markdown/users/pkg/models"
+	"github.com/cpprian/blog_posts_with_markdown/website/pkg/auth"
 	"github.com/gorilla/mux"
 )
 
@@ -82,11 +85,18 @@ func (app *application) registerUserPost(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	u.Username = r.PostForm.Get("username")
-	u.Email = r.PostForm.Get("email")
+	u.Username = strings.TrimSpace(r.PostForm.Get("username"))
+	u.Email = strings.TrimSpace(r.PostForm.Get("email"))
 	u.Password = r.PostForm.Get("password")
 
-	url := fmt.Sprintf("%s/register", app.apis.users)
+	u.Password, err = auth.EncryptPassword(u.Password)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	url := fmt.Sprintf("%s/", app.apis.users)
 	app.postApiContent(url, u)
 
 	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
@@ -117,17 +127,53 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u.Username = r.PostForm.Get("email")
-	u.Password = r.PostForm.Get("password")
+	u.Username = strings.TrimSpace(r.PostForm.Get("email"))
+	u.Password = strings.TrimSpace(r.PostForm.Get("password"))
 
-	url := fmt.Sprintf("%s/login", app.apis.users)
-	app.postApiContent(url, u)
+	resp, err := app.getApiContent(fmt.Sprintf("%s/email/%s", app.apis.users, u.Username), &u)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
+	user := json.NewDecoder(resp.Body)
+	var authUser models.User
+	err = user.Decode(&authUser)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = auth.ComparePassword(authUser.Password, u.Password)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	token, err := auth.NewToken(authUser.ID.Hex())
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Authorization", token)
+
+	app.infoLog.Println("User logged in")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
-	// TODO: delete session
+	token := r.Header.Get("Authorization")
+	if token == "" {
+		app.errorLog.Println("Error getting token")
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
+	w.WriteHeader(http.StatusUnauthorized)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
