@@ -57,7 +57,7 @@ func (app *application) getUser(w http.ResponseWriter, r *http.Request, url stri
 	app.getApiContent(url, &utd.Users)
 	app.infoLog.Println(utd.Users)
 
-	app.render(w, r, "users", utd)
+	app.render(w, r, "home", utd.Users)
 }
 
 func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +73,7 @@ func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) registerUserGet(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "register", nil)
+	app.render(w, r, "auth/register", nil)
 }
 
 func (app *application) registerUserPost(w http.ResponseWriter, r *http.Request) {
@@ -115,7 +115,7 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) loginUserGet(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "login", nil)
+	app.render(w, r, "auth/login", nil)
 }
 
 func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {

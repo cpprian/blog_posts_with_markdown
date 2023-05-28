@@ -1,0 +1,24 @@
+{{ template "base" . }}
+
+{{ define "main" }}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>My Page</h1>
+
+            <p>
+                <a href="/logout">Logout</a>
+            </p>
+
+            <h2>Users:</h2>
+
+            {{ range .Users }}
+                <p>Name: {{ .Name }}</p>
+                <p>Email: {{ .Email }}</p>
+            {{ end }}
+        </div>
+    </div>
+</div>
+
+{{ end }}
