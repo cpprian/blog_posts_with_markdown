@@ -4,27 +4,17 @@ mongodb:
   image: 
     repository: mongo
     tag: 4.2.23
+    
+  auth:
+    enabled: false
   
   readinessProbe:
-    initialDelaySeconds: 5
-    periodSeconds: 5
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
+    enabled: false
   
   livenessProbe:
-    initialDelaySeconds: 30
-    periodSeconds: 5
-    timeoutSeconds: 5
-    failureThreshold: 6
-    successThreshold: 1
+    enabled: false
 
   persistence:
-    enabled: true
-    size: 1Gi
-    storageClass: standard
-    accessModes:
-      - ReadWriteOnce
     mountPath: /data/db
 
 # Blogposts users values
