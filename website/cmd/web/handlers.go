@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
 )
@@ -36,12 +35,11 @@ func (app *application) getApiContent(url string, templateData interface{}) erro
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	err = json.NewDecoder(resp.Body).Decode(templateData)
 	if err != nil {
 		return err
 	}
 
-	json.Unmarshal(bodyBytes, templateData)
 	return nil
 }
 

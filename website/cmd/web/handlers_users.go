@@ -86,7 +86,7 @@ func (app *application) registerUserPost(w http.ResponseWriter, r *http.Request)
 	u.Email = r.PostForm.Get("email")
 	u.Password = r.PostForm.Get("password")
 
-	url := fmt.Sprintf("%s", app.apis.users)
+	url := fmt.Sprintf("%s/register", app.apis.users)
 	app.postApiContent(url, u)
 
 	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
