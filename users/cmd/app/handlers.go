@@ -86,6 +86,7 @@ func (app *application) findByUsername(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) findByEmail(w http.ResponseWriter, r *http.Request) {
 	// Get email from request
+	app.infoLog.Println("Email:", r.URL.Query().Get("email"))
 	email := r.URL.Query().Get("email")
 
 	// Get user
@@ -119,11 +120,15 @@ func (app *application) insertUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, err)
 	}
+	app.infoLog.Println("User:", user)
 
 	// Insert user
 	_, err = app.users.InsertUser(&user)
 	if err != nil {
+		app.errorLog.Println("Error:", err)
 		app.serverError(w, err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	app.infoLog.Println("User was inserted with id:", user.ID)

@@ -22,12 +22,14 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getApiContent(url string, templateData interface{}) (*http.Response, error) {
+	app.infoLog.Printf("Getting content from %s\n", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
+	app.infoLog.Printf("Response body: %v/tTemplatedata: %v\n", resp.Body, templateData)
 	err = json.NewDecoder(resp.Body).Decode(templateData)
 	if err != nil {
 		return nil, err
@@ -42,10 +44,13 @@ func (app *application) postApiContent(url string, data interface{}) error {
 		return err
 	}
 
-	_, err = http.Post(url, "application/json", strings.NewReader(string(b)))
+	app.infoLog.Printf("Posting content %v to %s\n", data, url)
+	resp, err := http.Post(url, "application/json", strings.NewReader(string(b)))
 	if err != nil {
 		return err
 	}
+
+	app.infoLog.Printf("Response body: %v\n", resp.Body)
 
 	return nil
 }

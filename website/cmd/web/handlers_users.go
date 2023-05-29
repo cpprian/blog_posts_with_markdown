@@ -95,8 +95,11 @@ func (app *application) registerUserPost(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	url := fmt.Sprintf("%s/", app.apis.users)
-	app.postApiContent(url, u)
+	if err = app.postApiContent(app.apis.users, u); err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
@@ -129,7 +132,7 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	u.Email = strings.TrimSpace(r.PostForm.Get("email"))
 	u.Password = strings.TrimSpace(r.PostForm.Get("password"))
 
-	resp, err := app.getApiContent(fmt.Sprintf("%s/email/%s", app.apis.users, u.Username), &u)
+	resp, err := app.getApiContent(fmt.Sprintf("%s/email/%s", app.apis.users, u.Email), &u)
 	if err != nil {
 		app.errorLog.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
