@@ -126,7 +126,7 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u.Username = strings.TrimSpace(r.PostForm.Get("email"))
+	u.Email = strings.TrimSpace(r.PostForm.Get("email"))
 	u.Password = strings.TrimSpace(r.PostForm.Get("password"))
 
 	resp, err := app.getApiContent(fmt.Sprintf("%s/email/%s", app.apis.users, u.Username), &u)

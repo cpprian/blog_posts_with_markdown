@@ -22,3 +22,9 @@ users:
   args:
     - "-mongoURI"
     - "mongodb://blogposts-mongodb:27017/"
+
+# Blogposts website values
+website:
+  args:
+    - "-usersAPI"
+    - "http://blogposts-users/api/users/"
