@@ -98,7 +98,7 @@ func (app *application) registerUserPost(w http.ResponseWriter, r *http.Request)
 	url := fmt.Sprintf("%s/", app.apis.users)
 	app.postApiContent(url, u)
 
-	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
