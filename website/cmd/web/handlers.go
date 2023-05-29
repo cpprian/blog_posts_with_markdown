@@ -6,9 +6,18 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+
+	"github.com/cpprian/blog_posts_with_markdown/website/pkg/auth"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
+	app.infoLog.Println("Getting home page")
+	if err := app.authUser(r); err != nil {
+		app.errorLog.Println("home: Error authenticating user: ", err)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
 	app.render(w, r, "home", nil)
 }
 
@@ -65,4 +74,22 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		app.errorLog.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
+}
+
+func (app *application) authUser(r *http.Request) error {
+	tokenString, err := auth.ExtractToken(r)
+	if err != nil {
+		return err
+	}
+
+	token, err := auth.ParseToken(tokenString)
+	if err != nil {
+		return err
+	}
+
+	if !token.Valid {
+		return err
+	}
+
+	return nil
 }

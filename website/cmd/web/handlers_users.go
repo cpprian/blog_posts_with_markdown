@@ -46,10 +46,9 @@ func (app *application) getUserByUsername(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) getUser(w http.ResponseWriter, r *http.Request, url string) {
-	token := r.Header.Get("Authorization")
-	if token == "" {
-		app.errorLog.Println("Error getting token")
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	if err := app.authUser(r); err != nil {
+		app.errorLog.Println("getUser: Error authenticating user: ", err)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
@@ -167,8 +166,7 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
-	token := r.Header.Get("Authorization")
-	if token == "" {
+	if token := r.Header.Get("Authorization"); token == "" {
 		app.errorLog.Println("Error getting token")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
