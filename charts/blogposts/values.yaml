@@ -28,3 +28,20 @@ website:
   args:
     - "-usersAPI"
     - "http://blogposts-users/api/users/"
+    - "-postsAPI"
+    - "http://blogposts-posts/api/posts/"
+    - "-commentsAPI"
+    - "http://blogposts-comments/api/comments/"
+
+# Blogposts posts values
+posts:
+  args:
+    - "-mongoURI"
+    - "mongodb://blogposts-mongodb:27017/"
+
+# Blogposts comments values
+comments:
+  args:
+    - "-mongoURI"
+    - "mongodb://blogposts-mongodb:27017/"
+    

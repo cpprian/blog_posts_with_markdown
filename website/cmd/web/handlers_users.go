@@ -225,5 +225,6 @@ func (app *application) getAllUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "home", utd.Users)
+	app.infoLog.Println(utd.Users)
+	app.render(w, r, "home", utd)
 }

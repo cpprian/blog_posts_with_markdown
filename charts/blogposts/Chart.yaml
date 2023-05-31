@@ -12,5 +12,11 @@ dependencies:
     version: 13.6.x
   - name: users
     version: 0.x.x
+  - name: posts
+    version: 0.x.x
+  - name: website
+    version: 0.x.x
+  - name: comments
+    version: 0.x.x
 sources:
   - https://github.com/cpprian/blog_posts_with_markdown

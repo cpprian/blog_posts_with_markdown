@@ -1,0 +1,26 @@
+{{ template "base" . }}
+
+{{ define "main" }}
+    <main role="main">
+        <section>
+            <div class="container">
+                <h1>Text Editor</h1>
+
+                <form action="/save" method="POST">
+                    <div class="form-group col-md-6">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="markdown">Content:</label>
+                        <textarea class="form-control" id="markdown" name="markdown" rows="10"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </section>
+    </main>
+{{ end }}

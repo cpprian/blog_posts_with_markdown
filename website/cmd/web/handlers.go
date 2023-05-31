@@ -12,20 +12,7 @@ import (
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Println("Getting home page")
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		app.errorLog.Println("home: Error getting cookie: ", err)
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	tokenString := cookie.Value
-	if err := app.authUser(tokenString); err != nil {
-		app.errorLog.Println("home: Error authenticating user: ", err)
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
+	app.verifyCookie(w, r)
 	app.getAllUsers(w, r)
 }
 
@@ -92,4 +79,20 @@ func (app *application) authUser(tokenString string) error {
 	}
 
 	return nil
+}
+
+func (app *application) verifyCookie(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("token")
+	if err != nil {
+		app.errorLog.Println("verifyCookie: Error getting cookie: ", err)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	tokenString := cookie.Value
+	if err := app.authUser(tokenString); err != nil {
+		app.errorLog.Println("verifyCookie: Error authenticating user: ", err)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
 }

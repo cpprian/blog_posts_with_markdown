@@ -6,6 +6,8 @@ env:
     REGISTRY: ghcr.io
     USERS_IMAGE_NAME: "blogposts-users"
     WEBSITE_IMAGE_NAME: "blogposts-website"
+    POSTS_IMAGE_NAME: "blogposts-posts"
+    COMMENTS_IMAGE_NAME: "blogposts-comments"
 
 jobs:
     multi-registries:
@@ -48,3 +50,21 @@ jobs:
                 tags: |
                     cpprian/${{ env.WEBSITE_IMAGE_NAME }}
                     ghcr.io/cpprian/${{ env.WEBSITE_IMAGE_NAME }}
+            - name: Build and push the posts image
+              uses: docker/build-push-action@v3
+              with:
+                context: ./posts/
+                file: ./posts/Dockerfile
+                push: true
+                tags: |
+                    cpprian/${{ env.POSTS_IMAGE_NAME }}
+                    ghcr.io/cpprian/${{ env.POSTS_IMAGE_NAME }}
+            - name: Build and push the comments image
+              uses: docker/build-push-action@v3
+              with:
+                context: ./comments/
+                file: ./comments/Dockerfile
+                push: true
+                tags: |
+                    cpprian/${{ env.COMMENTS_IMAGE_NAME }}
+                    ghcr.io/cpprian/${{ env.COMMENTS_IMAGE_NAME }}

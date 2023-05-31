@@ -10,6 +10,8 @@ import (
 
 type apis struct {
 	users string
+	posts string
+	comments string
 }
 
 type application struct {
@@ -22,6 +24,8 @@ func main() {
 	serverAddr := flag.String("serverAddr", "", "HTTP server network address")
 	serverPort := flag.Int("serverPort", 8000, "HTTP server network port")
 	usersAPI := flag.String("usersAPI", "http://localhost:4000/api/users", "Users API endpoint")
+	postsAPI := flag.String("postsAPI", "http://localhost:4000/api/posts", "Posts API endpoint")
+	commentsAPI := flag.String("commentsAPI", "http://localhost:4000/api/comments", "Comments API endpoint")
 	flag.Parse()
 
 	app := &application{
@@ -29,6 +33,8 @@ func main() {
 		infoLog:  log.New(log.Writer(), "INFO\t", log.Ldate|log.Ltime),
 		apis: apis{
 			users: *usersAPI,
+			posts: *postsAPI,
+			comments: *commentsAPI,
 		},
 	}
 
