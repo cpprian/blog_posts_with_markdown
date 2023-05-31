@@ -11,7 +11,7 @@ import (
 
 func NewToken(userId string) (string, error) {
 	claims := &jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(time.Minute * 3).Unix(),
+		ExpiresAt: time.Now().Add(time.Minute * 10).Unix(),
 		Issuer: userId,
 		IssuedAt: time.Now().Unix(),
 	}

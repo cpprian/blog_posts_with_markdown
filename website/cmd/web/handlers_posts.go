@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
@@ -33,7 +34,7 @@ func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createPostGet(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "posts/editor", nil)
+	app.render(w, r, "post/editor", nil)
 }
 
 func (app *application) createPostPost(w http.ResponseWriter, r *http.Request) {
@@ -47,6 +48,7 @@ func (app *application) createPostPost(w http.ResponseWriter, r *http.Request) {
 
 	p.Title = r.PostForm.Get("title")
 	p.Content = string(mdToHTML([]byte(r.PostForm.Get("markdown"))))
+	p.CreatedAt = string(time.Now().Format("2006-01-02 15:04:05"))
 
 	app.infoLog.Println("New post ", p)
 	if err = app.postApiContent(app.apis.posts, p); err != nil {
@@ -111,6 +113,7 @@ func (app *application) getPost(w http.ResponseWriter, r *http.Request, url stri
 func (app *application) getAllPosts(w http.ResponseWriter, r *http.Request) {
 	app.verifyCookie(w, r)
 
+	app.infoLog.Println("URL: ", app.apis.posts)
 	resp, err := app.getApiContent(app.apis.posts)
 	if err != nil {
 		app.errorLog.Println("Error getting posts: ", err)
@@ -127,7 +130,7 @@ func (app *application) getAllPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "home", ptd)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // https://onlinetool.io/goplayground/#txO7hJ-ibeU

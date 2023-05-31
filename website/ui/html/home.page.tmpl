@@ -17,7 +17,7 @@
                     <a href="/post/view/" + .ID>
                         <h2>{{ .Title }} - {{ .CreatedAt }}</h2>
                     </a></br>
-                    {{ .Content }}
+                    {{ .Content | safeHTML }}
                 </div>
             {{ end }}
         </div>

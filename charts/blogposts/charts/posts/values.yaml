@@ -6,8 +6,8 @@ image:
   tag: ""
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: "blogposts-posts"
+fullnameOverride: "blogposts-posts"
 
 args: []
 

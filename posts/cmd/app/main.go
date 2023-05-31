@@ -32,8 +32,8 @@ func main() {
 
 	// Initialize a new logger which writes messages to the standard out stream,
 	// prefixed with the current date and time
-	infoLog := log.New(log.Writer(), "INFO\t", log.Ldate|log.Ltime)
-	errorLog := log.New(log.Writer(), "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	infoLog := log.New(log.Writer(), "\nINFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(log.Writer(), "\nERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// Initialize a new mongodb.PostModel instance
 	co := options.Client().ApplyURI(*mongoURI)
