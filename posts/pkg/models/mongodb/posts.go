@@ -27,14 +27,9 @@ func (m *PostModel) Create(post *models.Post) (*mongo.InsertOneResult, error) {
 
 // Get a post by its ID
 func (m *PostModel) GetById(id string) (*models.Post, error) {
-	p, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return nil, err
-	}
-
 	ctx := context.TODO()
 	var post models.Post
-	err = m.C.FindOne(ctx, bson.M{"_id": p}).Decode(&post)
+	err := m.C.FindOne(ctx, bson.M{"_id": id}).Decode(&post)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.New("no user found")

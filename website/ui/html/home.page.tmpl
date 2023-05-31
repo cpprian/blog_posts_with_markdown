@@ -14,10 +14,10 @@
             </p>
             {{ range .Posts }}
                 <div class="col-md-6">
-                    <a href="/post/view/" + .ID>
+                    <a href="/" >
                         <h2>{{ .Title }} - {{ .CreatedAt }}</h2>
                     </a></br>
-                    {{ .Content | safeHTML }}
+                    {{ .Content }}
                 </div>
             {{ end }}
         </div>

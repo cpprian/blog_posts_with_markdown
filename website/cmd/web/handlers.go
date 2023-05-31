@@ -73,6 +73,7 @@ func (app *application) authUser(tokenString string) error {
 		return err
 	}
 
+	app.infoLog.Println("authUser: Token is ", token , " and is ", token.Valid)
 	if !token.Valid {
 		app.errorLog.Println("authUser: Token is not valid")
 		return err

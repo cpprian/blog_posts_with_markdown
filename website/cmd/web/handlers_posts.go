@@ -57,11 +57,12 @@ func (app *application) createPostPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.getAllPosts(w, r)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (app *application) getPostById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+	app.infoLog.Println(vars)
 	id, ok := vars["id"]
 	if !ok {
 		app.errorLog.Println("Error getting post id")
@@ -130,7 +131,7 @@ func (app *application) getAllPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	app.render(w, r, "home", ptd)
 }
 
 // https://onlinetool.io/goplayground/#txO7hJ-ibeU
