@@ -27,7 +27,6 @@ func (app *application) getApiContent(url string, templateData interface{}) (*ht
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	app.infoLog.Printf("Response body: %v/tTemplatedata: %v\n", resp.Body, templateData)
 	err = json.NewDecoder(resp.Body).Decode(templateData)

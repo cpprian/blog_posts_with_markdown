@@ -140,6 +140,8 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := json.NewDecoder(resp.Body)
+	app.infoLog.Println(user)
+
 	var authUser models.User
 	err = user.Decode(&authUser)
 	if err != nil {
