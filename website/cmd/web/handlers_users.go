@@ -207,3 +207,23 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &cookie)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
+
+func (app *application) getAllUsers(w http.ResponseWriter, r *http.Request) {
+	resp, err := app.getApiContent(app.apis.users)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	var utd userTemplateData
+	err = json.NewDecoder(resp.Body).Decode(&utd.Users)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	app.render(w, r, "home", utd.Users)
+}

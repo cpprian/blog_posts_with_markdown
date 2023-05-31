@@ -26,7 +26,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "home", nil)
+	app.getAllUsers(w, r)
 }
 
 func (app *application) getApiContent(url string) (*http.Response, error) {
