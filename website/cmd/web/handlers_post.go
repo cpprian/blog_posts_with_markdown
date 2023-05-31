@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/cpprian/blog_posts_with_markdown/website/pkg/models"
+	"github.com/cpprian/blog_posts_with_markdown/posts/pkg/models"
 )
 
 type postTempalteData struct {
@@ -30,13 +30,13 @@ func (app *application) createPostGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createPostPost(w http.ResponseWriter, r *http.Request) {
-	var p Post
-	err := r.ParseForm()
-	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+	// var p models.Post
+	// err := r.ParseForm()
+	// if err != nil {
+	// 	app.errorLog.Println(err.Error())
+	// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	// 	return
+	// }
 
 }
 

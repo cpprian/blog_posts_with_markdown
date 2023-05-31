@@ -11,19 +11,18 @@ RUN go mod download && \
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o /go/bin/blogpost-comments ./cmd/app
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o /go/bin/blogpost-posts ./cmd/app
 
 
 FROM alpine:3.17.3
-LABEL language="golang"
+
+LABEL langugage="golang"
 LABEL org.opencontainers.image.source https://github.com/cpprian/blog_posts_with_markdown
 
 COPY --from=builder /etc/passwd /etc/passwd
 
-WORKDIR /opt/web
+COPY --from=builder --chown=appuser:1000 /go/bin/blogpost-posts /blogpost-posts
 
-COPY --from=builder --chown=appuser:1000 /go/bin/blogposts-comments blogposts-comments
+USER appuser
 
-COPY ./ui ui
-
-ENTRYPOINT ["./blogposts-posts"]
+ENTRYPOINT ["./blogpost-posts"]

@@ -1,3 +1,5 @@
+github.com/cpprian/blog_posts_with_markdown/comments v0.0.0-20230531093234-9cdd4c61bf47 h1:t5tagVNvzRjRf2wqSLOnjiI8RdhDH2x4X8mXbR5CSWA=
+github.com/cpprian/blog_posts_with_markdown/comments v0.0.0-20230531093234-9cdd4c61bf47/go.mod h1:zK3LMdVOyjCM3MeBIxs36WfcX1UXFvvM17QWCoD8Zhs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/golang/snappy v0.0.1 h1:Qgr9rKW7uDUkrbSmQeiDsGa8SjGyCOGtuasMWwvp2P4=

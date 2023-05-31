@@ -1,6 +1,9 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/cpprian/blog_posts_with_markdown/comments/pkg/models"
+)
 
 type Post struct {
 	ID primitive.ObjectID `bson:"_id,omitempty"`
@@ -8,5 +11,5 @@ type Post struct {
 	Title string `bson:"title,omitempty"`
 	Content string `bson:"content,omitempty"`
 	CreatedAt string `bson:"created_at,omitempty"`
-	Comments []Comment `bson:"comments,omitempty"`
+	Comments []models.Comment `bson:"comments,omitempty"`
 }

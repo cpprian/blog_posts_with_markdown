@@ -8,7 +8,10 @@ require (
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 )
 
+require github.com/cpprian/blog_posts_with_markdown/comments v0.0.0-20230531093234-9cdd4c61bf47 // indirect
+
 require (
+	github.com/cpprian/blog_posts_with_markdown/posts v0.0.0-20230531095057-131ab7422b13
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	go.mongodb.org/mongo-driver v1.11.6 // indirect
 )

@@ -5,6 +5,7 @@ go 1.20
 require go.mongodb.org/mongo-driver v1.11.6
 
 require (
+	github.com/cpprian/blog_posts_with_markdown/comments v0.0.0-20230531093234-9cdd4c61bf47
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/klauspost/compress v1.13.6 // indirect
