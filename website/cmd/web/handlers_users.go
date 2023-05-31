@@ -132,7 +132,7 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	u.Email = strings.TrimSpace(r.PostForm.Get("email"))
 	u.Password = strings.TrimSpace(r.PostForm.Get("password"))
 
-	resp, err := app.getApiContent(fmt.Sprintf("%s/email/%s", app.apis.users, u.Email), &u)
+	resp, err := app.getApiContent(fmt.Sprintf("%semail/%s", app.apis.users, u.Email), &u)
 	if err != nil {
 		app.errorLog.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

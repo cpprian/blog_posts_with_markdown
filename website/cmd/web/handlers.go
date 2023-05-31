@@ -45,12 +45,10 @@ func (app *application) postApiContent(url string, data interface{}) error {
 	}
 
 	app.infoLog.Printf("Posting content %v to %s\n", data, url)
-	resp, err := http.Post(url, "application/json", strings.NewReader(string(b)))
+	_, err = http.Post(url, "application/json", strings.NewReader(string(b)))
 	if err != nil {
 		return err
 	}
-
-	app.infoLog.Printf("Response body: %v\n", resp.Body)
 
 	return nil
 }
