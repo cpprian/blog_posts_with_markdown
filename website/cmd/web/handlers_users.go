@@ -47,19 +47,7 @@ func (app *application) getUserByUsername(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) getUser(w http.ResponseWriter, r *http.Request, url string) {
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		app.errorLog.Println("Error getting cookie: ", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	token := cookie.Value
-	if err = app.authUser(token); err != nil {
-		app.errorLog.Println("Error authenticating user: ", err)
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
+	app.verifyCookie(w, r)
 
 	resp, err := app.getApiContent(url)
 	if err != nil {
@@ -77,7 +65,7 @@ func (app *application) getUser(w http.ResponseWriter, r *http.Request, url stri
 		return
 	}
 
-	app.render(w, r, "home", utd.Users)
+	app.getAllPosts(w, r)
 }
 
 func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
@@ -193,7 +181,8 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &cookie)
 
 	app.infoLog.Println("User logged in")
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	// app.getAllPosts(w, r)
+	app.getAllUsers(w, r)
 }
 
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
@@ -226,5 +215,5 @@ func (app *application) getAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.infoLog.Println(utd.Users)
-	app.render(w, r, "home", utd)
+	app.getAllPosts(w, r)
 }

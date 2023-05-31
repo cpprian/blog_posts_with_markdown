@@ -8,7 +8,5 @@ type User struct {
 	Username   string               `bson:"username"`
 	Email      string               `bson:"email"`
 	Password   string               `bson:"password"`
-	Posts      []primitive.ObjectID `bson:"posts"`
-	Comments   []primitive.ObjectID `bson:"comments"`
 	Subscribes []primitive.ObjectID `bson:"subscribe"`
 }

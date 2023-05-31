@@ -13,7 +13,7 @@ import (
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Println("Getting home page")
 	app.verifyCookie(w, r)
-	app.getAllUsers(w, r)
+	app.getAllPosts(w, r)
 }
 
 func (app *application) getApiContent(url string) (*http.Response, error) {

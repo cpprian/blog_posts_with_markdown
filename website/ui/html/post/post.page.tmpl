@@ -1,1 +1,26 @@
 {{ template "base" . }}
+
+{{ define "main" }}
+
+<p> {{ .Title }} - {{ .CreatedAt }}</p>
+
+{{ .Content }}
+
+</br>
+
+<form method="POST" action="/comment/create">
+    <div class="form-group">
+        <label for="comment">Create Comment</label>
+        <input type="text" class="form-control" id="comment" name="comment" placeholder="Enter your comment">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form> 
+
+</br>
+
+{{ range .Comments }}
+
+<p> {{ .Content }} - {{ .CreatedAt }}</p>
+
+{{ end }}
+{{ end }}

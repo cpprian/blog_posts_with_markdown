@@ -11,7 +11,7 @@ RUN go mod download && \
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o /go/bin/blogpost-comments ./cmd/app
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o /go/bin/blogposts-comments ./cmd/app
 
 
 FROM alpine:3.17.3
@@ -21,8 +21,8 @@ LABEL org.opencontainers.image.source https://github.com/cpprian/blog_posts_with
 
 COPY --from=builder /etc/passwd /etc/passwd
 
-COPY --from=builder --chown=appuser:1000 /go/bin/blogpost-comments /blogpost-comments
+COPY --from=builder --chown=appuser:1000 /go/bin/blogposts-comments /blogposts-comments
 
 USER appuser
 
-ENTRYPOINT ["./blogpost-comments"]
+ENTRYPOINT ["./blogposts-comments"]
