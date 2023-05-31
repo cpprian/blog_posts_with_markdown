@@ -127,7 +127,7 @@ func (app *application) findByEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.infoLog.Println("User was sent with data:\n", b)
+	app.infoLog.Println("User was sent")
 
 	// Send response
 	w.Header().Set("Content-Type", "application/json")

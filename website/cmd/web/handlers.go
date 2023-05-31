@@ -12,7 +12,15 @@ import (
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Println("Getting home page")
-	if err := app.authUser(r); err != nil {
+	cookie, err := r.Cookie("token")
+	if err != nil {
+		app.errorLog.Println("home: Error getting cookie: ", err)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	tokenString := cookie.Value
+	if err := app.authUser(tokenString); err != nil {
 		app.errorLog.Println("home: Error authenticating user: ", err)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -21,19 +29,12 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "home", nil)
 }
 
-func (app *application) getApiContent(url string, templateData interface{}) (*http.Response, error) {
+func (app *application) getApiContent(url string) (*http.Response, error) {
 	app.infoLog.Printf("Getting content from %s\n", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
-
-	app.infoLog.Printf("Response body: %v/tTemplatedata: %v\n", resp.Body, templateData)
-	err = json.NewDecoder(resp.Body).Decode(templateData)
-	if err != nil {
-		return nil, err
-	}
-
 	return resp, nil
 }
 
@@ -78,18 +79,15 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	}
 }
 
-func (app *application) authUser(r *http.Request) error {
-	tokenString, err := auth.ExtractToken(r)
-	if err != nil {
-		return err
-	}
-
+func (app *application) authUser(tokenString string) error {
 	token, err := auth.ParseToken(tokenString)
 	if err != nil {
+		app.errorLog.Println("authUser: Error parsing token: ", err)
 		return err
 	}
 
 	if !token.Valid {
+		app.errorLog.Println("authUser: Token is not valid")
 		return err
 	}
 

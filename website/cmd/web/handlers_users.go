@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/cpprian/blog_posts_with_markdown/users/pkg/models"
 	"github.com/cpprian/blog_posts_with_markdown/website/pkg/auth"
@@ -46,15 +47,35 @@ func (app *application) getUserByUsername(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) getUser(w http.ResponseWriter, r *http.Request, url string) {
-	if err := app.authUser(r); err != nil {
-		app.errorLog.Println("getUser: Error authenticating user: ", err)
+	cookie, err := r.Cookie("token")
+	if err != nil {
+		app.errorLog.Println("Error getting cookie: ", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	token := cookie.Value
+	if err = app.authUser(token); err != nil {
+		app.errorLog.Println("Error authenticating user: ", err)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
+	resp, err := app.getApiContent(url)
+	if err != nil {
+		app.errorLog.Println("Error getting user: ", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
 	var utd userTemplateData
-	app.getApiContent(url, &utd.Users)
-	app.infoLog.Println(utd.Users)
+	err = json.NewDecoder(resp.Body).Decode(&utd.User)
+	if err != nil {
+		app.errorLog.Println("Error decoding users: ", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
 	app.render(w, r, "home", utd.Users)
 }
@@ -132,23 +153,22 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	u.Email = strings.TrimSpace(r.PostForm.Get("email"))
 	u.Password = strings.TrimSpace(r.PostForm.Get("password"))
 
-	resp, err := app.getApiContent(fmt.Sprintf("%semail/%s", app.apis.users, u.Email), &u)
+	resp, err := app.getApiContent(fmt.Sprintf("%semail/%s", app.apis.users, u.Email))
 	if err != nil {
 		app.errorLog.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	user := json.NewDecoder(resp.Body)
-	app.infoLog.Println(user)
-
+	userDecoder := json.NewDecoder(resp.Body)
 	var authUser models.User
-	err = user.Decode(&authUser)
+	err = userDecoder.Decode(&authUser)
 	if err != nil {
 		app.errorLog.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+	app.infoLog.Println(authUser)
 
 	err = auth.ComparePassword(authUser.Password, u.Password)
 	if err != nil {
@@ -164,19 +184,26 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Authorization", token)
+	cookie := http.Cookie{
+		Name: "token",
+		Value: token,
+		HttpOnly: true,
+		Expires: time.Now().Add(24 * time.Hour),
+	}
+	http.SetCookie(w, &cookie)
 
 	app.infoLog.Println("User logged in")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
-	if token := r.Header.Get("Authorization"); token == "" {
-		app.errorLog.Println("Error getting token")
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+	cookie := http.Cookie{
+		Name: "token",
+		Value: "",
+		HttpOnly: true,
+		Expires: time.Unix(0, 0),
 	}
 
-	w.WriteHeader(http.StatusUnauthorized)
+	http.SetCookie(w, &cookie)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
