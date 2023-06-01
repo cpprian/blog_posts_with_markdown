@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/cpprian/blog_posts_with_markdown/posts/pkg/models"
 	"github.com/gorilla/mux"
@@ -41,16 +40,7 @@ func (app *application) getPostById(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	app.infoLog.Printf("ID: %s", id)
 
-	startIndex := strings.Index(id, `ObjectId("`) + len(`ObjectId("`)
-	endIndex := strings.Index(id, `")`)
-	if startIndex == -1 || endIndex == -1 {
-		app.errorLog.Println("Cannot parse")
-		return 
-	}
-	hexID := id[startIndex:endIndex]
-	app.infoLog.Printf("Parsed ID: ", hexID)
-
-	post, err := app.posts.GetById(hexID)
+	post, err := app.posts.GetById(id)
 	if err != nil {
 		if err.Error() == "no user found" {
 			app.infoLog.Println("Post not found")

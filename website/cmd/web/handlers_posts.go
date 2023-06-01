@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type postTempalteData struct {
+type PostTempalteData struct {
 	Post models.Post
 	Posts []models.Post
 }
@@ -47,7 +47,7 @@ func (app *application) createPostPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.Title = r.PostForm.Get("title")
-	p.Content = string(mdToHTML([]byte(r.PostForm.Get("markdown"))))
+	p.Content = string(mdToHTML([]byte(r.PostForm.Get("content"))))
 	p.CreatedAt = string(time.Now().Format("2006-01-02 15:04:05"))
 
 	app.infoLog.Println("New post ", p)
@@ -100,7 +100,7 @@ func (app *application) getPost(w http.ResponseWriter, r *http.Request, url stri
 	}
 	defer resp.Body.Close()
 
-	var ptd postTempalteData
+	var ptd PostTempalteData
 	err = json.NewDecoder(resp.Body).Decode(&ptd.Post)
 	if err != nil {
 		app.errorLog.Println("Error decoding post: ", err)
@@ -123,7 +123,7 @@ func (app *application) getAllPosts(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	var ptd postTempalteData
+	var ptd PostTempalteData
 	err = json.NewDecoder(resp.Body).Decode(&ptd.Posts)
 	if err != nil {
 		app.errorLog.Println("Error decoding posts: ", err)

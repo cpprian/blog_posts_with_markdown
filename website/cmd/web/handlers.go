@@ -10,6 +10,12 @@ import (
 	"github.com/cpprian/blog_posts_with_markdown/website/pkg/auth"
 )
 
+type PostHTML struct {
+	Title string
+	Content template.HTML
+	CreatedAt string
+}
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Println("Getting home page")
 	app.verifyCookie(w, r)
@@ -59,7 +65,19 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		return
 	}
 
-	err = ts.Execute(w, td)
+	var htmlvalues []PostHTML
+	if td != nil {
+		ptd := td.(PostTempalteData)
+		for _, v := range ptd.Posts {
+			htmlvalues = append(htmlvalues, PostHTML{
+				Title: v.Title,
+				Content: template.HTML(v.Content),
+				CreatedAt: v.CreatedAt,
+			})
+		}
+	}
+
+	err = ts.Execute(w, htmlvalues)
 	if err != nil {
 		app.errorLog.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
