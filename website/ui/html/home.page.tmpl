@@ -15,10 +15,10 @@
             {{ range .Posts }}
                 <div class="col-md-6">
                     <a href="/" >
-                        <h2>{{ .Title }} - {{ .CreatedAt }}</h2>
+                        <h2>{{ .Post.Title }} - {{ .Post.CreatedAt }} - {{ .Username }}</h2>
                     </a></br>
                 </div>
-                {{ .Content }}
+                {{ .Post.Content }}
             {{ end }}
         </div>
     </div>

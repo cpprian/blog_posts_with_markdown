@@ -10,16 +10,6 @@ import (
 	"github.com/cpprian/blog_posts_with_markdown/website/pkg/auth"
 )
 
-type PostHTML struct {
-	Title string
-	Content template.HTML
-	CreatedAt string
-}
-
-type PostContainer struct {
-	Posts []PostHTML
-}
-
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Println("Getting home page")
 	app.verifyCookie(w, r)

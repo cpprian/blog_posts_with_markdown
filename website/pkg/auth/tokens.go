@@ -27,3 +27,17 @@ func parseJwtCallback(token *jwt.Token) (interface{}, error) {
 func ParseToken(tokenString string) (*jwt.Token, error) {
 	return jwt.Parse(tokenString, parseJwtCallback)
 }
+
+func GetUserIdFromToken(tokenString string) (string, error) {
+	token, err := ParseToken(tokenString)
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", fmt.Errorf("could not parse claims")
+	}
+
+	return claims["iss"].(string), nil
+}

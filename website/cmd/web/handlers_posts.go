@@ -9,14 +9,21 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/cpprian/blog_posts_with_markdown/posts/pkg/models"
+	"github.com/cpprian/blog_posts_with_markdown/website/pkg/auth"
 	"github.com/gorilla/mux"
 )
 
-type PostTempalteData struct {
+type PostData struct {
 	Post models.Post
-	Posts []models.Post
+	Username string
+}
+
+type PostTempalteData struct {
+	Post PostData
+	Posts []PostData
 }
 
 func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
@@ -47,8 +54,28 @@ func (app *application) createPostPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.Title = r.PostForm.Get("title")
-	p.Content = string(mdToHTML([]byte(r.PostForm.Get("content"))))
+	p.Content = r.PostForm.Get("content")
 	p.CreatedAt = string(time.Now().Format("2006-01-02 15:04:05"))
+
+	cookie, err := r.Cookie("token")
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	user_id, err := auth.GetUserIdFromToken(cookie.Value)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	p.USER_ID, err = primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 
 	app.infoLog.Println("New post ", p)
 	if err = app.postApiContent(app.apis.posts, p); err != nil {
@@ -101,7 +128,7 @@ func (app *application) getPost(w http.ResponseWriter, r *http.Request, url stri
 	defer resp.Body.Close()
 
 	var ptd PostTempalteData
-	err = json.NewDecoder(resp.Body).Decode(&ptd.Post)
+	err = json.NewDecoder(resp.Body).Decode(&ptd.Post.Post)
 	if err != nil {
 		app.errorLog.Println("Error decoding post: ", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -124,11 +151,27 @@ func (app *application) getAllPosts(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	var ptd PostTempalteData
-	err = json.NewDecoder(resp.Body).Decode(&ptd.Posts)
+	var posts []models.Post
+	err = json.NewDecoder(resp.Body).Decode(&posts)
 	if err != nil {
 		app.errorLog.Println("Error decoding posts: ", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
+	}
+
+	for _, post := range posts {
+		username, err := app.getUsernameById(post.USER_ID.Hex())
+		if err != nil {
+			app.errorLog.Println("Error getting username: ", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		app.infoLog.Println("Username: ", username)
+		ptd.Posts = append(ptd.Posts, PostData{
+			Post: post,
+			Username: username,
+		})
 	}
 
 	app.render(w, r, "home", ptd)

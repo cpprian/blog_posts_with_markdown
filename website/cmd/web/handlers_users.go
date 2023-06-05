@@ -216,3 +216,19 @@ func (app *application) getAllUsers(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Println(utd.Users)
 	app.getAllPosts(w, r)
 }
+
+func (app *application) getUsernameById(id string) (string, error) {
+	resp, err := app.getApiContent(fmt.Sprintf("%s%s", app.apis.users, id))
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	var u models.User
+	err = json.NewDecoder(resp.Body).Decode(&u)
+	if err != nil {
+		return "", err
+	}
+
+	return u.Username, nil
+}
