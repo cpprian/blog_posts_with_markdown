@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -19,6 +20,7 @@ import (
 type PostData struct {
 	Post models.Post
 	Username string
+	Content template.HTML
 }
 
 type PostTempalteData struct {
@@ -54,7 +56,8 @@ func (app *application) createPostPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.Title = r.PostForm.Get("title")
-	p.Content = r.PostForm.Get("content")
+	p.Content = r.PostForm.Get("markdown")
+	app.infoLog.Println("Content: ", p.Content)
 	p.CreatedAt = string(time.Now().Format("2006-01-02 15:04:05"))
 
 	cookie, err := r.Cookie("token")
@@ -166,11 +169,15 @@ func (app *application) getAllPosts(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
-
 		app.infoLog.Println("Username: ", username)
+
+		content := template.HTML(mdToHTML([]byte(post.Content)))
+		app.infoLog.Println("Content: ", content)
+
 		ptd.Posts = append(ptd.Posts, PostData{
 			Post: post,
 			Username: username,
+			Content: content,
 		})
 	}
 

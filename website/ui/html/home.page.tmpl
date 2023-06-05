@@ -13,12 +13,13 @@
                 <a href="/post/create" class="btn btn-primary">Create Post</a>
             </p>
             {{ range .Posts }}
-                <div class="col-md-6">
-                    <a href="/" >
-                        <h2>{{ .Post.Title }} - {{ .Post.CreatedAt }} - {{ .Username }}</h2>
-                    </a></br>
+                <div class="col-md-8">
+                    <h1 class="text-primary">{{ .Post.Title }} - {{ .Post.CreatedAt }}</h1>
+                    <h4 class="font-weight-bold">by {{ .Username }}</h4>
+                    <div class="bg-dark text-white rounded-4 border-4">
+                        {{ .Content }}
+                    </div>
                 </div>
-                {{ .Post.Content }}
             {{ end }}
         </div>
     </div>
