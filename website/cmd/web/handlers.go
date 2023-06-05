@@ -16,6 +16,10 @@ type PostHTML struct {
 	CreatedAt string
 }
 
+type PostContainer struct {
+	Posts []PostHTML
+}
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.infoLog.Println("Getting home page")
 	app.verifyCookie(w, r)
@@ -65,19 +69,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		return
 	}
 
-	var htmlvalues []PostHTML
-	if td != nil {
-		ptd := td.(PostTempalteData)
-		for _, v := range ptd.Posts {
-			htmlvalues = append(htmlvalues, PostHTML{
-				Title: v.Title,
-				Content: template.HTML(v.Content),
-				CreatedAt: v.CreatedAt,
-			})
-		}
-	}
-
-	err = ts.Execute(w, htmlvalues)
+	err = ts.Execute(w, td)
 	if err != nil {
 		app.errorLog.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

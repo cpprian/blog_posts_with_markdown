@@ -181,7 +181,7 @@ func (app *application) loginUserPost(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &cookie)
 
 	app.infoLog.Println("User logged in")
-	app.getAllPosts(w, r)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
